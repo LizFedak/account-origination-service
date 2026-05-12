@@ -1,0 +1,20 @@
+{
+  "id": "5e455c4a-bd58-4fd6-8b18-7c80c7020a52",
+  "name": "Northstar Bank — Account Origination API",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "apiKey",
+      "value": "demo-key",
+      "type": "secret",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_using": "Postman/11.0.0"
+}

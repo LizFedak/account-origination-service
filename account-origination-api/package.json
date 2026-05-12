@@ -1,0 +1,25 @@
+{
+  "name": "account-origination-api",
+  "version": "1.0.0",
+  "description": "Northstar Bank Account Origination API demo for Postman Enterprise.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "keywords": [
+    "northstar-bank",
+    "account-origination",
+    "postman",
+    "express",
+    "retail-banking"
+  ],
+  "author": "Northstar Bank API Platform Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

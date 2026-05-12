@@ -1,0 +1,6 @@
+apiVersion: v2
+name: account-origination-api
+description: Northstar Bank Account Origination API demo service.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
