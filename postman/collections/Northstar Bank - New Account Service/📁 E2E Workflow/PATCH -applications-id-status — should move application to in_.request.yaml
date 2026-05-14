@@ -1,0 +1,33 @@
+$kind: http-request
+name: PATCH /applications/:id/status — should move application to in_review
+url: "{{baseUrl}}/applications/{{e2eApplicationId}}/status"
+method: PATCH
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "status": "in_review",
+      "decisionReason": "Partner identity verification queued for operations review."
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('PATCH /applications/:id/status — should move application to in_review', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('Business logic updates lifecycle state to in_review', function () {
+        pm.expect(body.data.id).to.eql(pm.collectionVariables.get('e2eApplicationId'));
+        pm.expect(body.data.status).to.eql('in_review');
+        pm.expect(body.data.decisionReason).to.include('Partner identity');
+      });
+      pm.test('Response envelope remains present after state transition', function () {
+        pm.expect(body).to.have.keys(['data', 'meta']);
+        pm.expect(body.meta.correlationId).to.be.a('string');
+      });
+    language: text/javascript
+order: 3001

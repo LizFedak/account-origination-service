@@ -1,0 +1,20 @@
+$kind: http-request
+name: GET /applications/:id — should retrieve CRUD test application
+url: "{{baseUrl}}/applications/{{crudApplicationId}}"
+method: GET
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('GET /applications/:id — should retrieve CRUD test application', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('Retrieved CRUD application matches captured ID', function () {
+        pm.expect(body.data.id).to.eql(pm.collectionVariables.get('crudApplicationId'));
+        pm.expect(body.data.status).to.eql('submitted');
+      });
+    language: text/javascript
+order: 3001

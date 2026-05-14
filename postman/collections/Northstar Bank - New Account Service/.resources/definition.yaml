@@ -1,0 +1,22 @@
+$kind: collection
+name: Northstar Bank - New Account Service
+description: Northstar Bank’s Account Origination API enables trusted digital channels and approved fintech partners to submit, track, and manage new retail account applications for checking and savings products. The primary consumers are Northstar’s web and mobile teams, branch-assist tools, and external onboarding partners using a Postman Partner Workspace. The API centralizes application intake, decision status, applicant information, and disclosure consent so the bank can provide a consistent, governed origination experience across channels. It belongs in the API portfolio as the reusable onboarding entry point for retail deposit growth and partner-led acquisition.
+variables:
+  baseUrl: http://localhost:3001
+  apiKey: demo-key
+  applicationId: app_demo_1001
+  e2eApplicationId: app_demo_1001
+  crudApplicationId: app_demo_1001
+  unknownApplicationId: app_demo_missing
+  correlationId: corr_demo_postman_seed
+  e2eEmail: alex.rivera@example.com
+  crudEmail: casey.nguyen@example.com
+  partnerReferenceId: partner-postman-seed
+  requestTimestamp: ""
+scripts:
+  - type: http:beforeRequest
+    code: |-
+      const correlationId = `corr_demo_postman_${pm.variables.replaceIn('{{$guid}}')}`;
+      pm.collectionVariables.set('correlationId', correlationId);
+      console.log(`[Northstar Bank] ${pm.request.method} ${pm.request.url.toString()} correlationId=${correlationId}`);
+    language: text/javascript

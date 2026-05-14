@@ -1,4 +1,4 @@
-replicaCount: 2
+replicaCount: 1
 image:
   repository: northstar/account-origination-api
   tag: "1.0.0"
@@ -6,15 +6,30 @@ image:
 service:
   type: ClusterIP
   port: 80
-  targetPort: 3000
+  targetPort: 3001
 ingress:
-  enabled: true
+  enabled: false
   hosts:
     - host: account-origination-api.northstarbank.internal
       paths:
         - path: /
           pathType: Prefix
 env:
-  PORT: "3000"
+  PORT: "3001"
 apiKeySecret:
   value: "demo-key"
+
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
+
+insights:
+  enabled: true
+  serviceName: "account-origination-api"
+  workspaceId: "74d24f7b-2f2c-4464-bc06-6454a0b306da"
+  systemEnvId: "019e2420-5909-7003-8225-f5c6a0d1b7d0"

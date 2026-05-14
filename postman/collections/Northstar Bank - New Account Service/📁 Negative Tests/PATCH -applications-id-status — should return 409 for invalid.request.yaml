@@ -1,0 +1,29 @@
+$kind: http-request
+name: PATCH /applications/:id/status — should return 409 for invalid transition
+url: "{{baseUrl}}/applications/app_demo_1003/status"
+method: PATCH
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "status": "submitted",
+      "decisionReason": "Attempt to reopen an approved application."
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('PATCH /applications/:id/status — should return 409 for invalid transition', function () {
+        pm.response.to.have.status(409);
+      });
+      const body = pm.response.json();
+      pm.test('Invalid transition response uses business error code', function () {
+        pm.expect(body.error.code).to.eql('INVALID_STATUS_TRANSITION');
+        pm.expect(body.error.message).to.include('approved');
+        pm.expect(body.error.correlationId).to.be.a('string');
+      });
+    language: text/javascript
+order: 4000

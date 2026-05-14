@@ -1,0 +1,21 @@
+workspace:
+  id: 74d24f7b-2f2c-4464-bc06-6454a0b306da
+
+localResources:
+  collections:
+    - ../account-origination-api/postman/collection.json
+    - ../postman/collections/Northstar Bank - Account Origination API
+  environments:
+    - ../account-origination-api/postman/environment.json
+  specs:
+    - ../account-origination-api/openapi.yaml
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../postman/collections/Northstar Bank - Account Origination API: 9474696-11099a3c-5db7-4d8f-a9b5-77397bb6c0f0
+  environments:
+    ../account-origination-api/postman/environment.json: 9474696-5e455c4a-bd58-4fd6-8b18-7c80c7020a52
+  specs:
+    ../account-origination-api/openapi.yaml: 128ea2a4-ab82-4d9b-b6a1-a02cea1bb396

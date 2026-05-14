@@ -1,0 +1,77 @@
+$kind: http-request
+name: POST /applications — should create a new application and return 201
+url: "{{baseUrl}}/applications"
+method: POST
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "productCode": "NORTHSTAR_CHECKING",
+      "channel": "partner",
+      "applicant": {
+        "firstName": "Alex",
+        "lastName": "Rivera",
+        "email": "{{e2eEmail}}",
+        "phone": "+1-555-0199",
+        "dateOfBirth": "1991-06-14",
+        "ssnLast4": "6789",
+        "address": {
+          "line1": "410 Partner Plaza",
+          "city": "Denver",
+          "state": "CO",
+          "postalCode": "80202",
+          "country": "US"
+        }
+      },
+      "employment": {
+        "employmentStatus": "employed",
+        "annualIncome": 112000
+      },
+      "funding": {
+        "initialDepositAmount": 750,
+        "fundingSource": "external_ach"
+      },
+      "consents": {
+        "privacyPolicyAccepted": true,
+        "eSignAccepted": true
+      },
+      "requestedDebitCard": true,
+      "partnerReferenceId": "{{partnerReferenceId}}"
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      const suffix = Date.now();
+      pm.collectionVariables.set('e2eEmail', `alex.rivera+${suffix}@partner.example.com`);
+      pm.collectionVariables.set('partnerReferenceId', `partner-postman-${suffix}`);
+      pm.collectionVariables.set('requestTimestamp', new Date().toISOString());
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('POST /applications — should create a new application and return 201', function () {
+        pm.response.to.have.status(201);
+      });
+      const body = pm.response.json();
+      pm.test('Response envelope includes data and meta', function () {
+        pm.expect(body).to.have.keys(['data', 'meta']);
+        pm.expect(body.meta.correlationId).to.be.a('string');
+        pm.expect(body.meta.timestamp).to.be.a('string');
+      });
+      pm.test('Created application includes all contract fields', function () {
+        const required = ['id', 'status', 'productCode', 'channel', 'applicant', 'employment', 'funding', 'consents', 'requestedDebitCard', 'partnerReferenceId', 'riskTier', 'decisionReason', 'submittedAt', 'createdAt', 'updatedAt'];
+        required.forEach((field) => pm.expect(body.data).to.have.property(field));
+      });
+      pm.test('Business logic sets submitted status and accepted consents', function () {
+        pm.expect(body.data.status).to.eql('submitted');
+        pm.expect(body.data.consents.privacyPolicyAccepted).to.eql(true);
+        pm.expect(body.data.consents.eSignAccepted).to.eql(true);
+        pm.expect(['low', 'standard', 'review']).to.include(body.data.riskTier);
+      });
+      pm.collectionVariables.set('e2eApplicationId', body.data.id);
+      pm.collectionVariables.set('applicationId', body.data.id);
+    language: text/javascript
+order: 1000

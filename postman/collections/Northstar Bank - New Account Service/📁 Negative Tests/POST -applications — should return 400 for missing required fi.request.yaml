@@ -1,0 +1,37 @@
+$kind: http-request
+name: POST /applications — should return 400 for missing required fields
+url: "{{baseUrl}}/applications"
+method: POST
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "productCode": "NORTHSTAR_CHECKING",
+      "channel": "partner",
+      "applicant": {
+        "firstName": "Missing",
+        "lastName": "Email"
+      },
+      "consents": {
+        "privacyPolicyAccepted": true,
+        "eSignAccepted": true
+      }
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('POST /applications — should return 400 for missing required fields', function () {
+        pm.response.to.have.status(400);
+      });
+      const body = pm.response.json();
+      pm.test('Validation error response uses standard error envelope', function () {
+        pm.expect(body.error.code).to.eql('VALIDATION_ERROR');
+        pm.expect(body.error.message).to.include('Missing required fields');
+        pm.expect(body.error.correlationId).to.be.a('string');
+      });
+    language: text/javascript
+order: 2000

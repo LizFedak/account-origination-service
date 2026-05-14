@@ -1,0 +1,28 @@
+$kind: http-request
+name: GET /applications — should return demo seed applications
+url: "{{baseUrl}}/applications?limit=10"
+method: GET
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+queryParams:
+  limit: "10"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('GET /applications — should return demo seed applications', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('List response includes data array and count metadata', function () {
+        pm.expect(body.data).to.be.an('array');
+        pm.expect(body.data.length).to.be.greaterThan(0);
+        pm.expect(body.meta.count).to.be.a('number');
+      });
+      pm.test('First application includes contract fields', function () {
+        const first = body.data[0];
+        ['id', 'status', 'productCode', 'channel', 'applicant', 'employment', 'funding'].forEach((field) => pm.expect(first).to.have.property(field));
+      });
+      pm.collectionVariables.set('applicationId', body.data[0].id);
+    language: text/javascript
+order: 2000

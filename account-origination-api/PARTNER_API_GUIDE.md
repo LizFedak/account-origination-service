@@ -7,7 +7,7 @@ The Account Origination API lets approved partners submit and track retail depos
 Send the API key in the `x-api-key` request header on every request.
 
 ```bash
-curl http://localhost:3000/health \
+curl http://localhost:3001/health \
   -H "x-api-key: demo-key" \
   -H "x-correlation-id: corr_demo_partner_001"
 ```

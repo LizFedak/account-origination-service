@@ -1,0 +1,21 @@
+$kind: http-request
+name: GET /applications — should return 401 for invalid API key
+url: "{{baseUrl}}/applications"
+method: GET
+headers:
+  x-api-key: invalid-key
+  x-correlation-id: "{{correlationId}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('GET /applications — should return 401 for invalid API key', function () {
+        pm.response.to.have.status(401);
+      });
+      const body = pm.response.json();
+      pm.test('Invalid auth response has error code and correlation ID', function () {
+        pm.expect(body.error.code).to.eql('UNAUTHORIZED');
+        pm.expect(body.error.message).to.be.a('string');
+        pm.expect(body.error.correlationId).to.be.a('string');
+      });
+    language: text/javascript
+order: 1000

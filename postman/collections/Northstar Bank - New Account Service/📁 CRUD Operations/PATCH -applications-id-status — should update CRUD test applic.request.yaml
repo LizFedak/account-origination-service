@@ -1,0 +1,29 @@
+$kind: http-request
+name: PATCH /applications/:id/status — should update CRUD test application
+url: "{{baseUrl}}/applications/{{crudApplicationId}}/status"
+method: PATCH
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "status": "in_review",
+      "decisionReason": "CRUD workflow review step."
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('PATCH /applications/:id/status — should update CRUD test application', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('CRUD application state changes to in_review', function () {
+        pm.expect(body.data.id).to.eql(pm.collectionVariables.get('crudApplicationId'));
+        pm.expect(body.data.status).to.eql('in_review');
+        pm.expect(body.data.updatedAt).to.be.a('string');
+      });
+    language: text/javascript
+order: 4000

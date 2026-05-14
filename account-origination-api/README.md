@@ -9,25 +9,25 @@ Northstar Bank’s Account Origination API enables trusted digital channels and 
 ```bash
 npm install
 npm start
-# Server running at http://localhost:3000
+# Server running at http://localhost:3001
 ```
 
-The service reads `PORT` and `API_KEY` from the environment. Defaults are `PORT=3000` and `API_KEY=demo-key`.
+The service reads `PORT` and `API_KEY` from the environment. Defaults are `PORT=3001` and `API_KEY=demo-key`.
 
 ## curl Examples
 
 ```bash
 # Happy path
-curl http://localhost:3000/health -H "x-api-key: demo-key"
+curl http://localhost:3001/health -H "x-api-key: demo-key"
 
 # Unauthorized
-curl http://localhost:3000/health -H "x-api-key: wrong-key"
+curl http://localhost:3001/health -H "x-api-key: wrong-key"
 ```
 
 Create an application:
 
 ```bash
-curl -X POST http://localhost:3000/applications \
+curl -X POST http://localhost:3001/applications \
   -H "x-api-key: demo-key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -81,7 +81,7 @@ curl -X POST http://localhost:3000/applications \
 1. Import `openapi.yaml` as the API definition in Postman.
 2. Import `postman/collection.json`.
 3. Import `postman/environment.json` and select `Northstar Bank — Account Origination API`.
-4. Confirm `baseUrl` is `http://localhost:3000` and `apiKey` is `demo-key`.
+4. Confirm `baseUrl` is `http://localhost:1` and `apiKey` is `demo-key`.
 5. Run the collection folders in this order for the cleanest demo: Smoke Tests, E2E Workflow, CRUD Operations, Negative Tests.
 
 The collection uses collection variables such as `applicationId`, `e2eApplicationId`, and `crudApplicationId`. Requests capture generated IDs with `pm.collectionVariables.set()` and reuse them in follow-up calls.
@@ -90,7 +90,7 @@ The collection uses collection variables such as `applicationId`, `e2eApplicatio
 
 ```bash
 docker build -t northstar/account-origination-api:1.0.0 .
-docker run --rm -p 3000:3000 -e API_KEY=demo-key northstar/account-origination-api:1.0.0
+docker run --rm -p 3001:3001 -e API_KEY=demo-key northstar/account-origination-api:1.0.0
 ```
 
 ## Helm

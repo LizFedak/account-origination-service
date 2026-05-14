@@ -1,0 +1,21 @@
+$kind: http-request
+name: GET /applications/:id — should return 404 for unknown ID
+url: "{{baseUrl}}/applications/{{unknownApplicationId}}"
+method: GET
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('GET /applications/:id — should return 404 for unknown ID', function () {
+        pm.response.to.have.status(404);
+      });
+      const body = pm.response.json();
+      pm.test('Not-found response identifies missing application', function () {
+        pm.expect(body.error.code).to.eql('APPLICATION_NOT_FOUND');
+        pm.expect(body.error.message).to.include(pm.collectionVariables.get('unknownApplicationId'));
+        pm.expect(body.error.correlationId).to.be.a('string');
+      });
+    language: text/javascript
+order: 3001

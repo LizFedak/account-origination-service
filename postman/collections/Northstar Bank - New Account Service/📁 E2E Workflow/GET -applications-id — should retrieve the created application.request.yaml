@@ -1,0 +1,26 @@
+$kind: http-request
+name: GET /applications/:id — should retrieve the created application
+url: "{{baseUrl}}/applications/{{e2eApplicationId}}"
+method: GET
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('GET /applications/:id — should retrieve the created application', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('Response contains matching application ID and envelope metadata', function () {
+        pm.expect(body.data.id).to.eql(pm.collectionVariables.get('e2eApplicationId'));
+        pm.expect(body.meta.correlationId).to.be.a('string');
+        pm.expect(body.meta.timestamp).to.be.a('string');
+      });
+      pm.test('Applicant and funding fields satisfy contract', function () {
+        pm.expect(body.data.applicant.email).to.be.a('string');
+        pm.expect(body.data.funding.initialDepositAmount).to.be.a('number');
+        pm.expect(body.data.requestedDebitCard).to.be.a('boolean');
+      });
+    language: text/javascript
+order: 2000

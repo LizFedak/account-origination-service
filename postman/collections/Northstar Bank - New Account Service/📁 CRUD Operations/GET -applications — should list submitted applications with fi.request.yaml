@@ -1,0 +1,26 @@
+$kind: http-request
+name: GET /applications — should list submitted applications with filters
+url: "{{baseUrl}}/applications?status=submitted&limit=10"
+method: GET
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+queryParams:
+  status: submitted
+  limit: "10"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('GET /applications — should list submitted applications with filters', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('Filtered list response has envelope and array data', function () {
+        pm.expect(body.data).to.be.an('array');
+        pm.expect(body.meta.count).to.be.a('number');
+      });
+      pm.test('Returned applications match submitted status when present', function () {
+        body.data.forEach((application) => pm.expect(application.status).to.eql('submitted'));
+      });
+    language: text/javascript
+order: 1000

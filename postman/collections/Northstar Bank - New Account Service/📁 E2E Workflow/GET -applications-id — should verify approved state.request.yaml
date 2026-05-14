@@ -1,0 +1,23 @@
+$kind: http-request
+name: GET /applications/:id — should verify approved state
+url: "{{baseUrl}}/applications/{{e2eApplicationId}}"
+method: GET
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('GET /applications/:id — should verify approved state', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('Lifecycle state persisted as approved', function () {
+        pm.expect(body.data.id).to.eql(pm.collectionVariables.get('e2eApplicationId'));
+        pm.expect(body.data.status).to.eql('approved');
+      });
+      pm.test('Response includes correlation ID in metadata', function () {
+        pm.expect(body.meta.correlationId).to.be.a('string');
+      });
+    language: text/javascript
+order: 5000

@@ -1,0 +1,24 @@
+$kind: http-request
+name: DELETE /applications/:id — should cancel CRUD test application
+url: "{{baseUrl}}/applications/{{crudApplicationId}}"
+method: DELETE
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('DELETE /applications/:id — should cancel CRUD test application', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('Cancelled application remains in response with cancelled status', function () {
+        pm.expect(body.data.id).to.eql(pm.collectionVariables.get('crudApplicationId'));
+        pm.expect(body.data.status).to.eql('cancelled');
+        pm.expect(body.data.decisionReason).to.include('cancelled');
+      });
+      pm.test('Cancel response includes correlation metadata', function () {
+        pm.expect(body.meta.correlationId).to.be.a('string');
+      });
+    language: text/javascript
+order: 5000

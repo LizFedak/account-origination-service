@@ -1,0 +1,31 @@
+$kind: http-request
+name: PATCH /applications/:id/status — should approve the reviewed application
+url: "{{baseUrl}}/applications/{{e2eApplicationId}}/status"
+method: PATCH
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "status": "approved",
+      "decisionReason": "Approved after partner-submitted identity and funding validation."
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('PATCH /applications/:id/status — should approve the reviewed application', function () {
+        pm.response.to.have.status(200);
+      });
+      const body = pm.response.json();
+      pm.test('Business logic allows in_review to approved transition', function () {
+        pm.expect(body.data.status).to.eql('approved');
+        pm.expect(body.data.decisionReason).to.include('Approved');
+      });
+      pm.test('Contract fields are still present after approval', function () {
+        ['id', 'status', 'productCode', 'applicant', 'funding', 'riskTier', 'updatedAt'].forEach((field) => pm.expect(body.data).to.have.property(field));
+      });
+    language: text/javascript
+order: 4000

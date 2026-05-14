@@ -1,0 +1,65 @@
+$kind: http-request
+name: POST /applications — should create a CRUD test application
+url: "{{baseUrl}}/applications"
+method: POST
+headers:
+  x-api-key: "{{apiKey}}"
+  x-correlation-id: "{{correlationId}}"
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "productCode": "NORTHSTAR_SAVINGS",
+      "channel": "web",
+      "applicant": {
+        "firstName": "Casey",
+        "lastName": "Nguyen",
+        "email": "{{crudEmail}}",
+        "phone": "+1-555-0188",
+        "dateOfBirth": "1989-03-08",
+        "ssnLast4": "2468",
+        "address": {
+          "line1": "77 Digital Way",
+          "city": "Portland",
+          "state": "OR",
+          "postalCode": "97204",
+          "country": "US"
+        }
+      },
+      "employment": {
+        "employmentStatus": "employed",
+        "annualIncome": 88000
+      },
+      "funding": {
+        "initialDepositAmount": 300,
+        "fundingSource": "debit_card"
+      },
+      "consents": {
+        "privacyPolicyAccepted": true,
+        "eSignAccepted": true
+      },
+      "requestedDebitCard": false,
+      "partnerReferenceId": "{{crudPartnerReferenceId}}"
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      const suffix = Date.now();
+      pm.collectionVariables.set('crudEmail', `casey.nguyen+${suffix}@partner.example.com`);
+      pm.collectionVariables.set('crudPartnerReferenceId', `crud-postman-${suffix}`);
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('POST /applications — should create a CRUD test application', function () {
+        pm.response.to.have.status(201);
+      });
+      const body = pm.response.json();
+      pm.test('Created CRUD application has submitted state and generated ID', function () {
+        pm.expect(body.data.id).to.be.a('string');
+        pm.expect(body.data.status).to.eql('submitted');
+        pm.expect(body.data.applicant.email).to.eql(pm.collectionVariables.get('crudEmail'));
+      });
+      pm.collectionVariables.set('crudApplicationId', body.data.id);
+    language: text/javascript
+order: 2000
