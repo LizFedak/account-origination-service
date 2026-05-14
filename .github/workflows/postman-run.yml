@@ -23,7 +23,7 @@ jobs:
         run: postman login --with-api-key "${{ secrets.POSTMAN_API_KEY }}"
 
       - name: Lint OpenAPI spec
-        run: postman spec lint "openapi.yaml" --report-events
+        run: postman spec lint ./openapi.yaml --workspace-id 74d24f7b-2f2c-4464-bc06-6454a0b306da --report-events
 
       - name: Run Postman collection
         run: postman collection run 9474696-11099a3c-5db7-4d8f-a9b5-77397bb6c0f0 -e 9474696-9b8a9456-0370-4f2a-9f53-c12ac2fd7965 --report-events
