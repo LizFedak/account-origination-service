@@ -1,0 +1,11 @@
+environment:
+  key: staging
+  label: Staging
+
+services:
+  billing-api:
+    baseUrl: https://billing-api.staging.example.com
+    tenantId: demo-staging
+    timeoutMs: 5000
+    featureFlags:
+      exampleFeature: true

@@ -1,0 +1,12 @@
+environment:
+  key: prod
+  label: Production
+  protected: true
+
+services:
+  billing-api:
+    baseUrl: https://billing-api.example.com
+    tenantId: demo-prod
+    timeoutMs: 3000
+    featureFlags:
+      exampleFeature: true
