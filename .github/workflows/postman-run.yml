@@ -1,9 +1,9 @@
-name: API Quality Checks
+# name: API Quality Checks
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0,6,12,18 * * *"
+  # schedule:
+    # - cron: "0 0,6,12,18 * * *"
   pull_request:
     branches:
       - main
